@@ -1,6 +1,7 @@
-import { fetchIdeas } from "@/services/apiIdeas";
+import { fetchIdeas } from "@/api/ideas";
+import IdeaCard from "@/components/IdeaCard";
 import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 
 const ideasQueryOptions = () => {
   return queryOptions({
@@ -30,22 +31,7 @@ function IdeasPage() {
       <h1 className="text-2xl font-bold mb-4">Ideas</h1>
       <ul className="grid grid-cols-1 sm:grid-cols-2 gap-6">
         {ideas.map((idea) => (
-          <li
-            key={idea._id}
-            className="border border-gray-300 p-4 rounded shadow flex flex-col bg-white justify-between"
-          >
-            <div>
-              <h2 className="text-xl font-semibold">{idea.title}</h2>
-              <p className="text-gray-700 mt-2">{idea.summary}</p>
-            </div>
-            <Link
-              to="/ideas/$ideaId"
-              params={{ ideaId: idea._id.toString() }}
-              className="text-center mt-4 inline-block bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition"
-            >
-              View Idea
-            </Link>
-          </li>
+          <IdeaCard idea={idea} key={idea._id} button={false} />
         ))}
       </ul>
     </div>

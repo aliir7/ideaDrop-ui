@@ -1,4 +1,4 @@
-import { fetchIdea } from "@/services/apiIdeas";
+import { fetchIdea } from "@/api/ideas";
 import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
 
