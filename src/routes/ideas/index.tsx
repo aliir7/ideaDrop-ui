@@ -26,6 +26,7 @@ export const Route = createFileRoute("/ideas/")({
 
 function IdeasPage() {
   const { data: ideas } = useSuspenseQuery(ideasQueryOptions());
+
   return (
     <div className="p-4">
       <h1 className="text-2xl font-bold mb-4">Ideas</h1>

@@ -21,6 +21,7 @@ export const Route = createFileRoute("/")({
 
 function HomePage() {
   const { data: ideas } = useSuspenseQuery(ideasQueryOptions());
+
   return (
     <div className="flex flex-col md:flex-row items-start justify-between gap-10 p-6 text-blue-600">
       <div className="flex flex-col items-start gap-4">
