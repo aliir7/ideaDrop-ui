@@ -15,3 +15,11 @@ export const fetchIdeas = async (limit?: number): Promise<Idea[]> => {
 
   return data;
 };
+
+export const createIdea = async (newIdea: any): Promise<Idea> => {
+  const res = await api.post("/ideas", {
+    ...newIdea,
+    createdAt: new Date().toISOString(),
+  });
+  return res.data.data;
+};
