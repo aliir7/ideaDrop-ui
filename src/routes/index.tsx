@@ -1,16 +1,8 @@
-import { fetchIdeas } from "@/api/ideas";
 import IdeaCard from "@/components/IdeaCard";
-
-import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
+import useIdeas from "@/hooks/useIdeas";
+import { ideasQueryOptions } from "@/lib/queries/ideasQueries";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Lightbulb } from "lucide-react";
-
-const ideasQueryOptions = () => {
-  return queryOptions({
-    queryKey: ["ideas", { limit: 3 }],
-    queryFn: () => fetchIdeas(3),
-  });
-};
 
 export const Route = createFileRoute("/")({
   component: HomePage,
@@ -20,8 +12,7 @@ export const Route = createFileRoute("/")({
 });
 
 function HomePage() {
-  const { data: ideas } = useSuspenseQuery(ideasQueryOptions());
-
+  const { data: ideas } = useIdeas();
   return (
     <div className="flex flex-col md:flex-row items-start justify-between gap-10 p-6 text-blue-600">
       <div className="flex flex-col items-start gap-4">

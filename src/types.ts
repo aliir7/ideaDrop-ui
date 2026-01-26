@@ -9,3 +9,8 @@ export type Idea = {
 };
 
 export type User = { id: string; name: string; email: string };
+
+export type ApiResponse<TData> = {
+  message: string;
+  data: TData;
+};

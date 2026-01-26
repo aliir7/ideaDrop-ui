@@ -1,5 +1,11 @@
 import api from "@/lib/axios";
 
+// log out user
+export const logoutUser = async () => {
+  try {
+  } catch (err) {}
+};
+
 export const refreshAccessToken = async () => {
   try {
     const res = await api.post("auth/refresh");
