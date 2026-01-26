@@ -1,10 +1,11 @@
 export type Idea = {
-  _id: string;
+  _id?: string;
   title: string;
   description: string;
   summary: string;
   tags: string[];
   createdAt: string;
+  updatedAt?: string;
   user: string;
 };
 

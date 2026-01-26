@@ -6,6 +6,7 @@ import {
 } from "@tanstack/react-router";
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 import { TanStackDevtools } from "@tanstack/react-devtools";
+import { ToastContainer } from "react-toastify";
 import { QueryClient } from "@tanstack/react-query";
 import Header from "@/components/Header";
 
@@ -50,6 +51,11 @@ function RootLayout() {
             render: <TanStackRouterDevtoolsPanel />,
           },
         ]}
+      />
+      <ToastContainer
+        position="top-right"
+        autoClose={2000}
+        style={{ padding: "8px" }}
       />
     </div>
   );

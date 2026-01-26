@@ -7,7 +7,7 @@ import { Lightbulb } from "lucide-react";
 export const Route = createFileRoute("/")({
   component: HomePage,
   loader: async ({ context: { queryClient } }) => {
-    return queryClient.ensureQueryData(ideasQueryOptions());
+    return queryClient.ensureQueryData(ideasQueryOptions(3));
   },
 });
 

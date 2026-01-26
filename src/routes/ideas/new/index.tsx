@@ -1,20 +1,49 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { useCreateIdea } from "@/hooks/useCreateIdea";
+import { createIdeaSchema } from "@/lib/validations/ideasValidations";
+import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
+import { toast } from "react-toastify";
 
 export const Route = createFileRoute("/ideas/new/")({
   component: NewIdeaPage,
 });
 
 function NewIdeaPage() {
-  const navigate = useNavigate();
   const [title, setTitle] = useState("");
   const [summary, setSummary] = useState("");
   const [description, setDescription] = useState("");
   const [tags, setTags] = useState("");
+
+  // use Create Idea hook
+  const { mutate, isPending: isLoading } = useCreateIdea();
+
+  // handle form submit
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const formData = { title, summary, description, tags };
+    const validated = createIdeaSchema.safeParse(formData);
+    if (!validated.success) {
+      toast.error(validated.error.message);
+      return;
+    }
+    try {
+      mutate({
+        title,
+        summary,
+        description,
+        tags: tags
+          .split(",")
+          .map((tag) => tag.trim())
+          .filter((tag) => tag !== ""),
+      });
+    } catch (err) {
+      console.error("Something went wrong");
+    }
+  };
   return (
     <div className="space-y-6">
       <h1 className="text-3xl font-bold mb-6">Create New Idea</h1>
-      <form className="space-y-4">
+      <form className="space-y-4" onSubmit={handleSubmit}>
         {/* title input */}
         <div>
           <label
@@ -82,7 +111,7 @@ function NewIdeaPage() {
             name="tags"
             id="tags"
             className="w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            placeholder="Enter Idea Tags"
+            placeholder="optional tags, comma separated"
             value={tags}
             onChange={(e) => setTags(e.target.value)}
           />
@@ -92,9 +121,10 @@ function NewIdeaPage() {
         <div className="mt-5">
           <button
             className="block w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-2 rounded-md transition disabled:cursor-not-allowed"
+            disabled={isLoading}
             type="submit"
           >
-            Create Idea
+            {isLoading ? "Creating Idea..." : "Create Idea"}
           </button>
         </div>
       </form>

@@ -1,14 +1,7 @@
-import { fetchIdeas } from "@/api/ideas";
 import IdeaCard from "@/components/IdeaCard";
-import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
+import useIdeas from "@/hooks/useIdeas";
+import { ideasQueryOptions } from "@/lib/queries/ideasQueries";
 import { createFileRoute } from "@tanstack/react-router";
-
-const ideasQueryOptions = () => {
-  return queryOptions({
-    queryKey: ["ideas"],
-    queryFn: () => fetchIdeas(),
-  });
-};
 
 export const Route = createFileRoute("/ideas/")({
   head: () => ({
@@ -25,7 +18,7 @@ export const Route = createFileRoute("/ideas/")({
 });
 
 function IdeasPage() {
-  const { data: ideas } = useSuspenseQuery(ideasQueryOptions());
+  const { data: ideas } = useIdeas();
 
   return (
     <div className="p-4">
