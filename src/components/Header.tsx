@@ -2,6 +2,7 @@ import { logoutUser } from "@/api/auth";
 import { useAuth } from "@/context/AuthContext";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { Lightbulb } from "lucide-react";
+import { Activity } from "react";
 
 const Header = () => {
   const navigate = useNavigate();
@@ -35,12 +36,14 @@ const Header = () => {
           >
             Ideas
           </Link>
-          <Link
-            to="/ideas/new"
-            className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md font-medium leading-none transition"
-          >
-            + New Idea
-          </Link>
+          <Activity mode={user && user.id ? "visible" : "hidden"}>
+            <Link
+              to="/ideas/new"
+              className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md font-medium leading-none transition"
+            >
+              + New Idea
+            </Link>
+          </Activity>
         </nav>
 
         {/* Auth Buttons */}

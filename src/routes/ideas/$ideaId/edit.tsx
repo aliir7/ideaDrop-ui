@@ -1,56 +1,78 @@
-import { useCreateIdea } from "@/hooks/useCreateIdea";
-import { createIdeaSchema } from "@/lib/validations/ideasValidations";
-import { createFileRoute } from "@tanstack/react-router";
+import { updateIdea } from "@/api/ideas";
+import { ideaQueryOptions } from "@/lib/queries/ideasQueries";
+import { updateIdeaSchema } from "@/lib/validations/ideasValidations";
+import { useMutation, useSuspenseQuery } from "@tanstack/react-query";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { Activity, useState } from "react";
+import { toast } from "react-toastify";
 
-export const Route = createFileRoute("/ideas/new/")({
-  component: NewIdeaPage,
+export const Route = createFileRoute("/ideas/$ideaId/edit")({
+  component: EditIdeaPage,
+  loader: async ({ params, context: { queryClient } }) => {
+    return queryClient.ensureQueryData(ideaQueryOptions(params.ideaId));
+  },
 });
 
-function NewIdeaPage() {
-  const [title, setTitle] = useState("");
-  const [summary, setSummary] = useState("");
-  const [description, setDescription] = useState("");
-  const [tags, setTags] = useState<string>("");
+function EditIdeaPage() {
+  const { ideaId } = Route.useParams();
+  const { data: idea } = useSuspenseQuery(ideaQueryOptions(ideaId));
+
+  // form states
+  const [title, setTitle] = useState(idea.title);
+  const [summary, setSummary] = useState(idea.summary);
+  const [description, setDescription] = useState(idea.description);
+  const [inputTags, setInputTags] = useState<string>(idea.tags.join(", "));
   const [errors, setErrors] = useState<string | string[]>([]);
 
-  // use Create Idea hook
-  const { mutateAsync, isPending: isLoading } = useCreateIdea();
-
-  // handle form submit
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    const formData = { title, summary, description, tags };
-    const validated = createIdeaSchema.safeParse(formData);
-    if (!validated.success) {
-      // extract all error messages from zod
-      const errorMessages = validated.error.issues.map(
-        (issue) => issue.message,
-      );
-      // show them in Error message section
-
-      setErrors(errorMessages);
-
-      return;
-    }
-
-    try {
-      mutateAsync({
+  // mutate for update idea
+  const navigate = useNavigate();
+  const { mutateAsync: editMutate, isPending: isLoading } = useMutation({
+    mutationFn: () =>
+      updateIdea(ideaId, {
         title,
         summary,
         description,
-        tags: tags
+        tags: inputTags
           .split(",")
           .map((tag) => tag.trim())
-          .filter((tag) => tag !== ""),
-      });
+          .filter(Boolean),
+      }),
+    onSuccess: () => {
+      navigate({ to: "/ideas/$ideaId", params: { ideaId } });
+      toast.success("Idea Edited Successfully");
+    },
+    onError: (err: any) => {
+      toast.error(err.message);
+    },
+  });
+
+  // edit form handler
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    try {
+      const formData = { title, summary, description, inputTags };
+      // validations
+      const validated = updateIdeaSchema.safeParse(formData);
+      if (!validated.success) {
+        // extract all error messages from zod
+        const errorMessages = validated.error.issues.map(
+          (issue) => issue.message,
+        );
+        // show them in Error message section
+
+        setErrors(errorMessages);
+
+        return;
+      }
+      await editMutate();
     } catch (err) {
       console.error("Something went wrong", err);
     }
   };
   return (
     <div className="space-y-6">
-      <h1 className="text-3xl font-bold mb-6">Create New Idea</h1>
+      <h1 className="text-3xl font-bold mb-6">Edit Idea</h1>
       {/* error message */}
       <Activity mode={errors.length > 0 ? "visible" : "hidden"}>
         <div className="bg-red-100 text-red-700 px-4 py-2 rounded mb-4">
@@ -130,8 +152,8 @@ function NewIdeaPage() {
             id="tags"
             className="w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
             placeholder="optional tags, comma separated"
-            value={tags}
-            onChange={(e) => setTags(e.target.value)}
+            value={inputTags}
+            onChange={(e) => setInputTags(e.target.value)}
           />
         </div>
 
@@ -142,7 +164,7 @@ function NewIdeaPage() {
             disabled={isLoading}
             type="submit"
           >
-            {isLoading ? "Creating Idea..." : "Create Idea"}
+            {isLoading ? "Editing Idea..." : "Edit Idea"}
           </button>
         </div>
       </form>

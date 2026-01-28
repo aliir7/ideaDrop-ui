@@ -1,10 +1,11 @@
 import api from "@/lib/axios";
+import type { UpdateIdeaValues } from "@/lib/validations/ideasValidations";
 import type { ApiResponse, Idea } from "@/types";
 import type { AxiosResponse } from "axios";
 
 // Get all Ideas
 export const fetchIdeas = async (
-  limit?: number
+  limit?: number,
 ): Promise<ApiResponse<Idea[]>> => {
   try {
     const res: AxiosResponse<ApiResponse<Idea[]>> = await api.get(`/ideas`, {
@@ -18,7 +19,7 @@ export const fetchIdeas = async (
 };
 
 // Get one Idea with id
-export const fetchIdea = async (ideaId: string): Promise<ApiResponse<Idea>> => {
+export const fetchIdea = async (ideaId: string): Promise<Idea> => {
   try {
     const res = await api.get(`/ideas/${ideaId}`);
     return res.data.data;
@@ -44,13 +45,25 @@ export const createIdea = async (newIdea: any): Promise<ApiResponse<Idea>> => {
 
 // Update Idea with id
 export const updateIdea = async (
-  ideaId: string
+  ideaId: string,
+  updatedIdea: UpdateIdeaValues,
 ): Promise<ApiResponse<Idea>> => {
   try {
-    const res = await api.put(`/ideas/${ideaId}`);
+    const res = await api.put(`/ideas/${ideaId}`, updatedIdea);
     return res.data.data;
   } catch (err: any) {
     const message = err.response?.data?.message || "Failed fetch Idea";
+    throw new Error(message);
+  }
+};
+
+// delete Idea
+export const deleteIdea = async (ideaId: string): Promise<any> => {
+  try {
+    const res = await api.delete(`/ideas/${ideaId}`);
+    return res.data.message;
+  } catch (err: any) {
+    const message = err.response?.data?.message || "Failed delete Idea";
     throw new Error(message);
   }
 };

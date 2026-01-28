@@ -2,6 +2,7 @@ import { createIdea } from "@/api/ideas";
 import { useMutation } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import { toast } from "react-toastify";
+
 export const useCreateIdea = () => {
   const navigate = useNavigate();
   const { mutateAsync, isPending } = useMutation({

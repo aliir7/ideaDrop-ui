@@ -44,7 +44,7 @@ export const logoutUser = async () => {
 export const refreshAccessToken = async (): Promise<AuthResponse> => {
   try {
     const res = await api.post("auth/refresh");
-    console.log("REFRESH RESPONSE", res.data);
+
     return res.data;
   } catch (err: any) {
     const message = err.response?.data?.message || "Failed to refresh token";
