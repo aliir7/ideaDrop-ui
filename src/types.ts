@@ -11,6 +11,12 @@ export type Idea = {
 
 export type User = { id: string; name: string; email: string };
 
+export type AuthResponse = {
+  message?: string;
+  accessToken: string;
+  user: User;
+};
+
 export type ApiResponse<TData> = {
   message: string;
   data: TData;

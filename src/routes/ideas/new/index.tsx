@@ -1,7 +1,7 @@
 import { useCreateIdea } from "@/hooks/useCreateIdea";
 import { createIdeaSchema } from "@/lib/validations/ideasValidations";
 import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
+import { Activity, useState } from "react";
 import { toast } from "react-toastify";
 
 export const Route = createFileRoute("/ideas/new/")({
@@ -12,10 +12,11 @@ function NewIdeaPage() {
   const [title, setTitle] = useState("");
   const [summary, setSummary] = useState("");
   const [description, setDescription] = useState("");
-  const [tags, setTags] = useState("");
+  const [tags, setTags] = useState<string>("");
+  const [errors, setErrors] = useState<string | string[]>([]);
 
   // use Create Idea hook
-  const { mutate, isPending: isLoading } = useCreateIdea();
+  const { mutateAsync, isPending: isLoading } = useCreateIdea();
 
   // handle form submit
   const handleSubmit = async (e: React.FormEvent) => {
@@ -23,11 +24,19 @@ function NewIdeaPage() {
     const formData = { title, summary, description, tags };
     const validated = createIdeaSchema.safeParse(formData);
     if (!validated.success) {
-      toast.error(validated.error.message);
+      // extract all error messages from zod
+      const errorMessages = validated.error.issues.map(
+        (issue) => issue.message,
+      );
+      // show them in Error message section
+
+      setErrors(errorMessages);
+
       return;
     }
+
     try {
-      mutate({
+      mutateAsync({
         title,
         summary,
         description,
@@ -43,6 +52,16 @@ function NewIdeaPage() {
   return (
     <div className="space-y-6">
       <h1 className="text-3xl font-bold mb-6">Create New Idea</h1>
+      {/* error message */}
+      <Activity mode={errors.length > 0 ? "visible" : "hidden"}>
+        <div className="bg-red-100 text-red-700 px-4 py-2 rounded mb-4">
+          <div className="space-y-1">
+            {typeof errors !== "string"
+              ? errors.map((error, index) => <p key={index}>{error}</p>)
+              : errors}
+          </div>
+        </div>
+      </Activity>
       <form className="space-y-4" onSubmit={handleSubmit}>
         {/* title input */}
         <div>

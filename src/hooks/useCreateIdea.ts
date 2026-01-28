@@ -4,7 +4,7 @@ import { useNavigate } from "@tanstack/react-router";
 import { toast } from "react-toastify";
 export const useCreateIdea = () => {
   const navigate = useNavigate();
-  const { mutate, isPending } = useMutation({
+  const { mutateAsync, isPending } = useMutation({
     mutationFn: createIdea,
     onSuccess: (data) => {
       navigate({ to: "/ideas" });
@@ -15,5 +15,5 @@ export const useCreateIdea = () => {
     },
   });
 
-  return { mutate, isPending };
+  return { mutateAsync, isPending };
 };

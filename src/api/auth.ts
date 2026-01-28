@@ -3,12 +3,15 @@ import type {
   CreateUserValues,
   LoginUserValues,
 } from "@/lib/validations/userValidations";
+import type { AuthResponse } from "@/types";
 
 // register new user
-export const registerUser = async (credentials: CreateUserValues) => {
+export const registerUser = async (
+  credentials: CreateUserValues,
+): Promise<AuthResponse> => {
   try {
     const res = await api.post("/auth/register", credentials);
-    res.data;
+    return res.data;
   } catch (err: any) {
     const message = err.response?.data?.message || "Failed to register user";
     throw new Error(message);
@@ -16,7 +19,9 @@ export const registerUser = async (credentials: CreateUserValues) => {
 };
 
 // login user
-export const loginUser = async (credentials: LoginUserValues) => {
+export const loginUser = async (
+  credentials: LoginUserValues,
+): Promise<AuthResponse> => {
   try {
     const res = await api.post("/auth/login", credentials);
     return res.data;
@@ -36,9 +41,10 @@ export const logoutUser = async () => {
   }
 };
 
-export const refreshAccessToken = async () => {
+export const refreshAccessToken = async (): Promise<AuthResponse> => {
   try {
     const res = await api.post("auth/refresh");
+    console.log("REFRESH RESPONSE", res.data);
     return res.data;
   } catch (err: any) {
     const message = err.response?.data?.message || "Failed to refresh token";

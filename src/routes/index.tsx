@@ -7,12 +7,12 @@ import { Lightbulb } from "lucide-react";
 export const Route = createFileRoute("/")({
   component: HomePage,
   loader: async ({ context: { queryClient } }) => {
-    return queryClient.ensureQueryData(ideasQueryOptions(3));
+    return queryClient.ensureQueryData(ideasQueryOptions());
   },
 });
 
 function HomePage() {
-  const { data: ideas } = useIdeas();
+  const { data: ideas } = useIdeas(3);
   return (
     <div className="flex flex-col md:flex-row items-start justify-between gap-10 p-6 text-blue-600">
       <div className="flex flex-col items-start gap-4">

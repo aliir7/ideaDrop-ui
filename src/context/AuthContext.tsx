@@ -13,7 +13,7 @@ type AuthContextType = {
   accessToken: null | string;
   setAccessToken: (token: string | null) => void;
   user: User | null;
-  setUser: (user: User) => void;
+  setUser: (user: User | null) => void;
 };
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
