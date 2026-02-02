@@ -25,7 +25,7 @@ const IdeaCard = ({ idea, button = true }: Props) => {
       </div>
       <Link
         to="/ideas/$ideaId"
-        params={{ ideaId: idea._id.toString() }}
+        params={{ ideaId: idea._id!.toString() }}
         className={linkClasses}
       >
         View Idea
